@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smarty Pants Chores</title>
+<title>Chore Assignments</title>
 <style>
-  /* Basic styling */
   body {
     font-family: Arial, sans-serif;
     display: flex;
@@ -24,7 +23,6 @@
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
   }
   .name-section {
     margin: 10px 0;
@@ -46,7 +44,7 @@
   .chore input {
     margin-right: 8px;
   }
-  .generate-button, .date-navigation {
+  .generate-button {
     padding: 10px 20px;
     background-color: #4CAF50;
     color: white;
@@ -56,164 +54,73 @@
     cursor: pointer;
     margin-top: 20px;
   }
-  .generate-button:hover, .date-navigation:hover {
+  .generate-button:hover {
     background-color: #45a049;
-  }
-  .all-chores-list {
-    margin-top: 20px;
-    font-size: 1.1em;
   }
 </style>
 </head>
 <body>
 
-<h1>Smarty Pants Chores</h1>
+<h1>Today's Chore Assignments</h1>
 <div class="chore-container" id="choreContainer">
   <!-- Chore assignments will be dynamically inserted here -->
 </div>
-<button class="generate-button" id="generateButton" onclick="promptPassword()" style="display:none;">Generate Chores</button>
-<div class="date-navigation">
-  <button onclick="previousDay()">⬅️ Previous Day</button>
-  <button onclick="nextDay()">Next Day ➡️</button>
-</div>
-
-<div class="all-chores-list">
-  <h2>Possible Chores:</h2>
-  <ul>
-    <li>🍽️ Wash the dishes</li>
-    <li>🧹 Vacuum</li>
-    <li>🧼 Clean the bathroom</li>
-    <li>🧺 General tidying</li>
-    <li>🍵 Make tea</li>
-    <li>🍲 Make food</li>
-    <li>🤗 Hug mummy</li>
-    <li>🤗 Hug daddy</li>
-    <li>🎉 Proclaim: "Your favourite mimi is the best!"</li>
-  </ul>
-</div>
+<button class="generate-button" onclick="assignChores()">Generate Chores</button>
 
 <script>
   const nieces = ["Tahani", "Amaani", "Moina", "Haneeni Pie"];
   const chores = [
     { task: "Wash the dishes", emoji: "🍽️" },
     { task: "Vacuum", emoji: "🧹" },
-    { task: "Clean the bathroom", emoji: "🧼" },
+    { task: "Proclaim Awais mimi as the best", emoji: "🥳" },
     { task: "General tidying", emoji: "🧺" },
     { task: "Make tea", emoji: "🍵" },
     { task: "Make food", emoji: "🍲" },
-    { task: "Hug mummy", emoji: "🤗" },
-    { task: "Hug daddy", emoji: "🤗" },
-    { task: "Proclaim: 'Awais mimi is the best!'", emoji: "🎉" }
+    { task: "Give mummy a hug", emoji: "🤗" },
+    { task: "Give daddy a hug", emoji: "🤗" }
   ];
-  const password = 'eulbwob';
-  const choreData = {}; // Store chore assignments for multiple days
-  let currentDate = new Date().setHours(0, 0, 0, 0);
-  
-  // Generate unique chores for each niece
-  function generateUniqueChores() {
-    const selectedChores = [...chores];
-    return nieces.map(() => {
-      const randomIndex = Math.floor(Math.random() * selectedChores.length);
-      const chore = selectedChores.splice(randomIndex, 1)[0];
-      return chore;
-    });
-  }
 
-  // Function to generate chores for the day
-  function generateChoresForDay(date) {
-    const dateString = new Date(date).toDateString();
-    if (!choreData[dateString]) {
-      const uniqueChores = generateUniqueChores();
-      choreData[dateString] = nieces.map((niece, index) => {
-        return { niece, chore: uniqueChores[index] };
-      });
-    }
-    return choreData[dateString];
-  }
-
-  // Display chores
-  function displayChores(date) {
+  function assignChores() {
     const container = document.getElementById("choreContainer");
     container.innerHTML = ""; // Clear previous assignments
 
-    const dateString = new Date(date).toDateString();
-    if (date < new Date().setHours(6, 0, 0, 0)) {
-      container.innerHTML = "<p>Chores will populate at 6am, stay tuned smarties!</p>";
-      return;
-    }
-    const todayChores = generateChoresForDay(date);
-
-    todayChores.forEach(entry => {
+    nieces.forEach(niece => {
+      const assignedChores = getRandomChores();
       const nameSection = document.createElement("div");
       nameSection.className = "name-section";
       const nameTitle = document.createElement("h2");
-      nameTitle.textContent = entry.niece;
+      nameTitle.textContent = niece;
       nameSection.appendChild(nameTitle);
 
-      const choreDiv = document.createElement("div");
-      choreDiv.className = "chore";
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      const choreLabel = document.createElement("label");
-      choreLabel.innerHTML = `${entry.chore.emoji} ${entry.chore.task}`;
-      choreDiv.appendChild(checkbox);
-      choreDiv.appendChild(choreLabel);
-      nameSection.appendChild(choreDiv);
+      assignedChores.forEach(chore => {
+        const choreDiv = document.createElement("div");
+        choreDiv.className = "chore";
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        const choreLabel = document.createElement("label");
+        choreLabel.innerHTML = `${chore.emoji} ${chore.task}`;
+        choreDiv.appendChild(checkbox);
+        choreDiv.appendChild(choreLabel);
+        nameSection.appendChild(choreDiv);
+      });
 
       container.appendChild(nameSection);
     });
   }
 
-  // Password prompt for generating chores
-  function promptPassword() {
-    const enteredPassword = prompt("Enter the password to generate chores:");
-    if (enteredPassword === password) {
-      saveChoresToCSV(currentDate);
-      alert("Chores generated and saved!");
-    } else {
-      alert("Incorrect password.");
+  function getRandomChores() {
+    const selectedChores = [];
+    while (selectedChores.length < 2) {
+      const randomChore = chores[Math.floor(Math.random() * chores.length)];
+      if (!selectedChores.includes(randomChore)) {
+        selectedChores.push(randomChore);
+      }
     }
+    return selectedChores;
   }
 
-  // Save chores to CSV
-  function saveChoresToCSV(date) {
-    const dateString = new Date(date).toDateString();
-    const todayChores = generateChoresForDay(date);
-    const csvContent = "data:text/csv;charset=utf-8," +
-      todayChores.map(entry => `${entry.niece},${entry.chore.task}`).join("\n");
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `chores_${dateString}.csv`);
-    document.body.appendChild(link); // Required for Firefox
-    link.click();
-    document.body.removeChild(link);
-  }
-
-  // Navigate days
-  function previousDay() {
-    currentDate -= 24 * 60 * 60 * 1000;
-    displayChores(currentDate);
-  }
-
-  function nextDay() {
-    const today = new Date().setHours(0, 0, 0, 0);
-    if (currentDate < today) {
-      currentDate += 24 * 60 * 60 * 1000;
-      displayChores(currentDate);
-    }
-  }
-
-  // Show or hide generate button based on date
-  function checkGenerateButton() {
-    const today = new Date().setHours(0, 0, 0, 0);
-    document.getElementById("generateButton").style.display = currentDate === today ? "block" : "none";
-  }
-
-  // Initialize display
-  displayChores(currentDate);
-  checkGenerateButton();
+  // Initial chore assignment
+  assignChores();
 </script>
 
 </body>
