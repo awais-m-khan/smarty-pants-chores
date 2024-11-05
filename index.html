@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chore Assignments</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #f9f9f9;
+  }
+  h1 {
+    color: #333;
+  }
+  .chore-container {
+    width: 100%;
+    max-width: 600px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .name-section {
+    margin: 10px 0;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  .name-section:last-child {
+    border-bottom: none;
+  }
+  .name-section h2 {
+    font-size: 1.2em;
+    color: #555;
+  }
+  .chore {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+  }
+  .chore input {
+    margin-right: 8px;
+  }
+  .generate-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  .generate-button:hover {
+    background-color: #45a049;
+  }
+</style>
+</head>
+<body>
+
+<h1>Today's Chore Assignments</h1>
+<div class="chore-container" id="choreContainer">
+  <!-- Chore assignments will be dynamically inserted here -->
+</div>
+<button class="generate-button" onclick="assignChores()">Generate Chores</button>
+
+<script>
+  const nieces = ["Tahani", "Amaani", "Moina", "Haneeni Pie"];
+  const chores = [
+    { task: "Wash the dishes", emoji: "🍽️" },
+    { task: "Vacuum", emoji: "🧹" },
+    { task: "Clean the bathroom", emoji: "🧼" },
+    { task: "General tidying", emoji: "🧺" },
+    { task: "Make tea", emoji: "🍵" },
+    { task: "Make food", emoji: "🍲" },
+    { task: "Give mummy a hug", emoji: "🤗" },
+    { task: "Give daddy a hug", emoji: "🤗" }
+  ];
+
+  function assignChores() {
+    const container = document.getElementById("choreContainer");
+    container.innerHTML = ""; // Clear previous assignments
+
+    nieces.forEach(niece => {
+      const assignedChores = getRandomChores();
+      const nameSection = document.createElement("div");
+      nameSection.className = "name-section";
+      const nameTitle = document.createElement("h2");
+      nameTitle.textContent = niece;
+      nameSection.appendChild(nameTitle);
+
+      assignedChores.forEach(chore => {
+        const choreDiv = document.createElement("div");
+        choreDiv.className = "chore";
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        const choreLabel = document.createElement("label");
+        choreLabel.innerHTML = `${chore.emoji} ${chore.task}`;
+        choreDiv.appendChild(checkbox);
+        choreDiv.appendChild(choreLabel);
+        nameSection.appendChild(choreDiv);
+      });
+
+      container.appendChild(nameSection);
+    });
+  }
+
+  function getRandomChores() {
+    const selectedChores = [];
+    while (selectedChores.length < 2) {
+      const randomChore = chores[Math.floor(Math.random() * chores.length)];
+      if (!selectedChores.includes(randomChore)) {
+        selectedChores.push(randomChore);
+      }
+    }
+    return selectedChores;
+  }
+
+  // Initial chore assignment
+  assignChores();
+</script>
+
+</body>
+</html>
